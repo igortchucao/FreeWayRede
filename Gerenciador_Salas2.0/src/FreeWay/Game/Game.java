@@ -33,13 +33,17 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	private static final long serialVersionUID = 1L;
 	// DADOS DA JANELA DO JOGO
 	public static JFrame frame;
+	private Thread threadIn;
+	private Thread threadOut;
+	private Thread threadRender;
 	private Thread thread;
 	public static final int WIDTH = 350;
 	public static final int HEIGHT = 190;
 	private final int SCALE = 4;
 	public static final int TAM_IMG = 16;
-	private static boolean isRunning = true;
+	public static boolean isRunning = true;
 	private static boolean contagem = true;
+	public static Graphics g;
 
 	// DADOS DO MUNDO
 	private BufferedImage image;
@@ -70,6 +74,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	private ObjectInputStream inObject;
 	public boolean isConnected = false;
 	public boolean allConnected = false;
+	public boolean threadR = false;
 	public boolean loop = false;
 	public int contAux = 0;
 	public int cont = 0;
@@ -131,11 +136,17 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	// inicia a thread
 	public synchronized void start() {
 		thread = new Thread(this);
+		threadRender = new Thread(render);
+		threadIn = new Thread(IN);
+		threadOut = new Thread(OUT);
 		isRunning = true;
 		thread.start();
+		threadRender.start();
+		threadIn.start();
+		threadOut.start();
 	}
 
-	// para a thread
+	// PARA A THREAD
 	public synchronized void stop() {
 		isRunning = false;
 		try {
@@ -145,7 +156,30 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		}
 	}
 
-	private void render() {
+	private Runnable render = new Runnable() {
+		public void run() {
+			while (isRunning)
+				render();
+		}
+	};
+	
+	private Runnable IN = new Runnable() {
+		public void run() {
+			while (isRunning)
+				if (allConnected)
+					inputServer();
+		}
+	};
+	
+	private Runnable OUT = new Runnable() {
+		public void run() {
+			while (isRunning)
+				if (allConnected)
+					outPutServer();
+		}
+	};
+
+	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
 			this.createBufferStrategy(3);
@@ -193,13 +227,11 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		} else if (menu.menuSelect.equals("single")) {
 			// RENDERIZA A RUA
 			world.render(g);
-
 			// RENDERIZA OS CARROS
-			for (int i = 0; i < vehicles.size(); i++) {
-				Vehicles e = vehicles.get(i);
+			for (int i = 0; i < Game.vehicles.size(); i++) {
+				Vehicles e = Game.vehicles.get(i);
 				e.render(g, i);
 			}
-
 			single.render(g);
 		}
 		bs.show();
@@ -257,7 +289,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 					falar = new DataOutputStream(cliente.getOutputStream());
 					falar.writeInt(1);
 					world.MAP = 1;
-				}else {
+				} else {
 					ouvir = new DataInputStream(cliente.getInputStream());
 					world.MAP = ouvir.readInt();
 				}
@@ -334,16 +366,10 @@ public class Game extends Canvas implements KeyListener, Runnable {
 			delta += (now - lastTime) / ns;
 			lastTime = now;
 			if (delta >= 1) {
-				if (allConnected)
-					inputServer();
-
 				tick();
-				render();
 				frames++;
 				delta--;
 
-				if (allConnected)
-					outPutServer();
 			}
 
 			if (System.currentTimeMillis() - timer >= 1000) {

@@ -19,7 +19,7 @@ public class Vehicles implements Serializable {
 		vehicleImage = Game.spritesheet.getSprite(0 + (64 * dados.COR), 0, 64, 64);
 	}
 
-	public void tick() {
+	public void tick() { 
 		dados.POS_X += dados.SPEED;
 		if (dados.POS_X > 1400)
 			dados.FAIXA = false;

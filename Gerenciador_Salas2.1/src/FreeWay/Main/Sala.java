@@ -70,9 +70,7 @@ public class Sala implements Runnable {
 		//thread1.start();
 		//thread2.start();
 		//thread3.start();
-		System.out.println("lancou1");
 		thread0.start();
-		System.out.println("lancou 2");
 		//vehiclesthread1.start();
 	}
 
@@ -94,7 +92,7 @@ public class Sala implements Runnable {
 	
 	private Runnable vehiclesthread = new Runnable() {
 		public void run() {
-			renderTick();
+			//renderTick();
 		}
 	};
 
@@ -133,7 +131,7 @@ public class Sala implements Runnable {
 			System.out.println("passou 3");
 			// LOOP DO GAME
 			while (isRunning) {
-				System.out.println("loop");
+				System.out.println(vehicles.get(1).POS_X);
 				// ENVIA OS DADOS DOS JOGADORES
 				outObject0 = new ObjectOutputStream(jogadoresConectados.get(0).getOutputStream());
 				outObject0.writeObject(players);
@@ -143,16 +141,16 @@ public class Sala implements Runnable {
 				outObject0.writeObject(vehicles);
 
 				// ATUALIZA OS DADOS DO JOGADOR ATUAL
-				inObject0 = new ObjectInputStream(jogadoresConectados.get(0).getInputStream());
+				/*inObject0 = new ObjectInputStream(jogadoresConectados.get(0).getInputStream());
 				players.set(0, (PlayerData) inObject0.readObject());
-
+*/
 			}
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public synchronized void player1() {
+	public void player1() {
 		try {
 			// FALA QUE SE CONECTOU
 			falar1 = new DataOutputStream(jogadoresConectados.get(1).getOutputStream());
@@ -186,7 +184,7 @@ public class Sala implements Runnable {
 		}
 	}
 
-	public synchronized void player2() {
+	public void player2() {
 		try {
 			// FALA QUE SE CONECTOU
 			falar2 = new DataOutputStream(jogadoresConectados.get(2).getOutputStream());
@@ -220,7 +218,7 @@ public class Sala implements Runnable {
 		}
 	}
 
-	public synchronized void player3() {
+	public void player3() {
 		try {
 			// FALA QUE SE CONECTOU
 			falar3 = new DataOutputStream(jogadoresConectados.get(3).getOutputStream());
@@ -254,45 +252,6 @@ public class Sala implements Runnable {
 		}
 	}
 
-	public void renderTick() {
-		long lastTime = System.nanoTime();
-		// CONSTANTE TICK POR SEG
-		double amountOfTicks = 60.0;
-
-		// CALCULO PARA O MOMENTO CERTO DE FAZER O UPDATE DO JOGO
-		double ns = 1000000000 / amountOfTicks;
-		double delta = 0;
-		double timer = System.currentTimeMillis();
-
-		// LOOP DO JOGO
-		while (isRunning) {
-			System.out.println("deu");
-			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
-			lastTime = now;
-			if (delta >= 1) {
-
-				frames++;
-				if (frames > maxFrames) {
-					frames = 0;
-					for (int i = 0; i < 10; i++) {
-						VehiclesData v = vehicles.get(i);
-						v.randomize();
-						v.tick(1);
-					}
-				}
-				frames++;
-				delta--;
-			}
-
-			if (System.currentTimeMillis() - timer >= 1000) {
-				frames = 0;
-				timer += 1000;
-			}
-		}
-		stop();
-	}
-	
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();

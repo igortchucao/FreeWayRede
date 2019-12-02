@@ -67,11 +67,11 @@ public class Game extends Canvas implements KeyListener, Runnable {
 
 	// LIGAÇÕES COM O SERVIDOR
 	private static int PORTA_PADRAO = 80;
-	private Socket cliente;
+	private static Socket cliente;
 	private static DataInputStream ouvir;
 	private static DataOutputStream falar;
-	private ObjectOutputStream outObject;
-	private ObjectInputStream inObject;
+	private static ObjectOutputStream outObject;
+	private static ObjectInputStream inObject;
 	public boolean isConnected = false;
 	public boolean allConnected = false;
 	public boolean threadR = false;
@@ -162,15 +162,17 @@ public class Game extends Canvas implements KeyListener, Runnable {
 				render();
 		}
 	};
-	
+
 	private Runnable IN = new Runnable() {
 		public void run() {
 			while (isRunning)
-				if (allConnected)
+				if (allConnected) {
+					System.out.println("in");
 					inputServer();
+				}
 		}
 	};
-	
+
 	private Runnable OUT = new Runnable() {
 		public void run() {
 			while (isRunning)

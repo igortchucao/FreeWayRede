@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.Random;
 
+import FreeWay.Audio.Sound;
 import FreeWay.Game.Game;
 
 public class Player implements Serializable {
@@ -22,6 +24,7 @@ public class Player implements Serializable {
 	public int index = 0;
 	public int maxIndex = 2;
 	public int LIFE = 3;
+	private Random rand = new Random();
 
 	private BufferedImage[] playerImage = new BufferedImage[maxIndex + 2];
 
@@ -30,14 +33,14 @@ public class Player implements Serializable {
 		this.PLAYER = player;
 		for (int i = 0; i < 2; i++) {
 			playerImage[i] = Game.spritesheet.getSprite(0 + (64 * i), 128, 64, 64);
-			playerImage[i + 2] = Game.spritesheet.getSprite(0 + (64 * i), 4*64, 64, 64);
+			playerImage[i + 2] = Game.spritesheet.getSprite(0 + (64 * i), 4 * 64, 64, 64);
 		}
 	}
 
 	public void render(Graphics g, int player) {
 		for (int i = 0; i < 2; i++) {
 			playerImage[i] = Game.spritesheet.getSprite(0 + (64 * i), 128, 64, 64);
-			playerImage[i + 2] = Game.spritesheet.getSprite(0 + (64 * i), 4*64, 64, 64);
+			playerImage[i + 2] = Game.spritesheet.getSprite(0 + (64 * i), 4 * 64, 64, 64);
 		}
 		if (UP || DOWN)
 			dados.MOV = true;
@@ -82,7 +85,7 @@ public class Player implements Serializable {
 			}
 		}
 		for (int i = 0; i < LIFE; i++) {
-			g.drawImage(playerImage[0], 1300 + i * 22, 720, 30, 30, null);	
+			g.drawImage(playerImage[0], 1300 + i * 22, 720, 30, 30, null);
 		}
 	}
 
@@ -101,8 +104,23 @@ public class Player implements Serializable {
 			dados.POS_Y = 659;
 			LIFE -= 1;
 		}
-		
-		if(LIFE == 0) {
+
+		/*if (isNear()) {
+			int aux = rand.nextInt(3);
+			switch (aux) {
+			case 0:
+				Sound.buzina1.play();
+				break;
+			case 1:
+				Sound.buzina2.play();
+				break;
+			case 2:
+				Sound.buzina3.play();
+				break;
+			}
+		}*/
+
+		if (LIFE == 0) {
 			dados.SCORE = 0;
 			LIFE = 3;
 		}
@@ -129,6 +147,25 @@ public class Player implements Serializable {
 				if (1400 - (Game.vehicles.get(i).dados.POS_X - 5) < dados.POS_X + 20
 						&& 1400 - (Game.vehicles.get(i).dados.POS_X - 5) + 45 > dados.POS_X + 20
 						&& (80 + i * 59) + 10 < dados.POS_Y + 20 && (80 + i * 59) + 10 + 30 > dados.POS_Y + 20) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isNear() {
+		for (int i = 0; i < Game.vehicles.size(); i++) {
+			if (Game.vehicles.get(i).dados.MAO == 1) {
+				if (Game.vehicles.get(i).dados.POS_X - 80 < dados.POS_X + 20
+						&& Game.vehicles.get(i).dados.POS_X - 80 + 103 > dados.POS_X + 20
+						&& (80 + i * 59) - 20 < dados.POS_Y + 20 && (80 + i * 59) - 20 + 90 > dados.POS_Y + 20) {
+					return true;
+				}
+			} else {
+				if (1400 - (Game.vehicles.get(i).dados.POS_X + 25) < dados.POS_X + 20
+						&& 1400 - (Game.vehicles.get(i).dados.POS_X + 25) + 103 > dados.POS_X + 20
+						&& (80 + i * 59) - 20 < dados.POS_Y + 20 && (80 + i * 59) - 20 + 90 > dados.POS_Y + 20) {
 					return true;
 				}
 			}

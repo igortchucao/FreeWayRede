@@ -25,25 +25,25 @@ public class VehiclesData implements Serializable {
 		if (FAIXA == false) {
 			COR = rand.nextInt(typeVehicules);
 			MAO = rand.nextInt(2);
-			SPEED = 3 + rand.nextInt(3);
+			SPEED = 3 + rand.nextDouble();
 			POS_X = 0;
 			FAIXA = true;
 			if (COR < 5)
-				SPEED = 3 + rand.nextInt(3);
+				SPEED = 3 + rand.nextDouble();
 			else if (COR == 5)
 				// MOTO
 				SPEED = 10;
 			else if (COR == 6)
 				// POLICIA
 				SPEED = 15;
-			else if (COR == 7) 
+			else if (COR == 7)
 				SPEED = 10;
 		}
 	}
-	
+
 	public void tick(double multVelocidade) {
 		POS_X += SPEED * multVelocidade;
-		if(POS_X > 1400)
+		if (POS_X > 1400)
 			FAIXA = false;
 	}
 }
