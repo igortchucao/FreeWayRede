@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;Spritesheet.java&apos; to &apos;Jogo_da_Galinha/src/FreeWay.Graficos&apos;&#x0D;&#x0A;- Original project: &apos;Zelda&apos;&#x0D;&#x0A;- Destination element: &apos;Jogo_da_Galinha/src/FreeWay.Graficos&apos;&#x0D;&#x0A;- Original element: &apos;com.gestudios.graficos.Spritesheet.java&apos;" description="Copy compilation unit" destination="=Jogo_da_Galinha/src&lt;FreeWay.Graficos" element1="/src&lt;com.gestudios.graficos{Spritesheet.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1573229982226" units="1" version="1.0"/>
+</session>

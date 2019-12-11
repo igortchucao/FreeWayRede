@@ -1,0 +1,73 @@
+package FreeWay.Game;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+
+import FreeWay.Entities.Player;
+import FreeWay.Entities.Vehicles;
+
+public class Render implements Runnable extends Game{
+
+	@Override
+	public void run() {
+		BufferStrategy bs = Game.getBufferStrategy();
+		if (bs == null) {
+			this.createBufferStrategy(3);
+			return;
+		}
+		// RENDERIZAÇÃO DO FUNDO DO JOGO
+		Graphics g = image.getGraphics();
+		g.setColor(Color.gray);
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+
+		g.dispose();
+		g = bs.getDrawGraphics();
+		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+		// SE ELE ESTIVER NO MENU, RENDERIZA O MENU
+		if (menu.menuSelect.equals("menu") || menu.menuSelect.equals("wait")) {
+			menu.render(g);
+		} else if (menu.menuSelect.equals("play")) {
+			if (!contagem) {
+				// RENDERIZA A RUA
+				world.render(g);
+
+				// RENDERIZA OS CARROS
+				for (int i = 0; i < vehicles.size(); i++) {
+					Vehicles e = vehicles.get(i);
+					e.render(g, i);
+				}
+
+				// RENDERIZA OS PLAYERS
+				for (int i = 0; i < players.size(); i++) {
+					Player p = players.get(i);
+					p.render(g, PLAYER);
+				}
+			} else {
+				cont++;
+				if (cont > 50) {
+					cont = 0;
+					contAux += 1;
+				}
+				if (contAux == 3)
+					contagem = false;
+				g.setColor(Color.white);
+				g.setFont(new Font("arial", Font.BOLD, 300));
+				g.drawString("" + contAux, 650 + 3, 500);
+			}
+		} else if (menu.menuSelect.equals("single")) {
+			// RENDERIZA A RUA
+			world.render(g);
+			// RENDERIZA OS CARROS
+			for (int i = 0; i < Game.vehicles.size(); i++) {
+				Vehicles e = Game.vehicles.get(i);
+				e.render(g, i);
+			}
+			single.render(g);
+		}
+		bs.show();
+
+	}
+
+}

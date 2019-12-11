@@ -1,0 +1,104 @@
+package FreeWay.Main;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import FreeWay.Entities.PlayerData;
+import FreeWay.Entities.VehiclesData;
+
+public class Sala implements Runnable {
+
+	public static List<Socket> jogadoresConectados;
+	private static DataOutputStream falar;
+	private static DataInputStream ouvir;
+	private ObjectOutputStream outObject;
+	private ObjectInputStream inObject;
+	public List<VehiclesData> vehicles;
+	public List<PlayerData> players;
+	private static boolean isRunning = true;
+	public static boolean retorno = true;
+
+	public Sala(List<Socket> jogadores) {
+		this.jogadoresConectados = jogadores;
+		System.out.println("SALA CRIADA COM OS JOGADORES: ");
+		for (int i = 0; i < 4; i++) {
+			System.out.println(this.jogadoresConectados.get(i).getRemoteSocketAddress());
+		}
+		vehicles = new ArrayList<VehiclesData>();
+		players = new ArrayList<PlayerData>();
+
+		for (int i = 0; i < 10; i++)
+			vehicles.add(new VehiclesData());
+	}
+
+	@Override
+	public void run() {
+		try {
+			for (int i = 0; i < 4; i++) {
+				falar = new DataOutputStream(this.jogadoresConectados.get(i).getOutputStream());
+				falar.writeInt(i);
+			}
+
+			while (isRunning) {
+				for (int i = 0; i < 10; i++) {
+					VehiclesData v = vehicles.get(i);
+					v.tick();
+					v.randomize();
+				}
+
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							outObject = new ObjectOutputStream(jogadoresConectados.get(0).getOutputStream());
+							outObject.writeObject(vehicles);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}.start();
+				outObject = new ObjectOutputStream(jogadoresConectados.get(1).getOutputStream());
+				outObject.writeObject(vehicles);
+				outObject = new ObjectOutputStream(jogadoresConectados.get(2).getOutputStream());
+				outObject.writeObject(vehicles);
+				outObject = new ObjectOutputStream(jogadoresConectados.get(3).getOutputStream());
+				outObject.writeObject(vehicles);
+
+				outObject = new ObjectOutputStream(jogadoresConectados.get(0).getOutputStream());
+				outObject.writeObject(players);
+				outObject = new ObjectOutputStream(jogadoresConectados.get(1).getOutputStream());
+				outObject.writeObject(players);
+				outObject = new ObjectOutputStream(jogadoresConectados.get(2).getOutputStream());
+				outObject.writeObject(players);
+				outObject = new ObjectOutputStream(jogadoresConectados.get(3).getOutputStream());
+				outObject.writeObject(players);
+
+				ouvir = new DataInputStream(jogadoresConectados.get(0).getInputStream());
+				retorno = ouvir.readBoolean();
+				ouvir = new DataInputStream(jogadoresConectados.get(1).getInputStream());
+				retorno = ouvir.readBoolean();
+				ouvir = new DataInputStream(jogadoresConectados.get(2).getInputStream());
+				retorno = ouvir.readBoolean();
+				ouvir = new DataInputStream(jogadoresConectados.get(3).getInputStream());
+				retorno = ouvir.readBoolean();
+
+				/*
+				 * inObject = new ObjectInputStream(conexao.getInputStream());
+				 * sala.players.set(PLAYER, (PlayerData) inObject.readObject());
+				 */
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

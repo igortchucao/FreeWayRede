@@ -1,0 +1,65 @@
+package FreeWay.Entities;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.Serializable;
+
+import FreeWay.Graficos.Spritesheet;
+
+public class Vehicles implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	public BufferedImage vehicleImage;
+	public VehiclesData dados;
+
+	public static Spritesheet spritesheet = new Spritesheet("/sprite.png");
+
+	public Vehicles() {
+		dados = new VehiclesData();
+		vehicleImage = spritesheet.getSprite(0 + (64 * dados.COR), 0, 64, 64);
+	}
+
+	public void tick() {
+		if (dados.COR < 5)
+			dados.POS_X += dados.SPEED;
+		else if (dados.COR == 5)
+			// MOTO
+			dados.POS_X += 15;
+		else if (dados.COR == 6)
+			// POLICIA
+			dados.POS_X += 10;
+		else if (dados.COR == 7)
+			// ONIBUS
+			dados.POS_X += 10;
+		
+		if (dados.POS_X > 1400)
+			dados.FAIXA = false;
+	}
+
+	public void render(Graphics g, int faixa) {
+		if (dados.COR < 5)
+			vehicleImage = spritesheet.getSprite(0 + (64 * dados.COR), 0, 64, 64);
+		else if (dados.COR == 5)
+			// MOTO
+			vehicleImage = spritesheet.getSprite(4 * 64, 64, 64, 64);
+		else if (dados.COR == 6)
+			// POLICIA
+			vehicleImage = spritesheet.getSprite(3 * 64, 64, 64, 64);
+		else if (dados.COR == 7) {
+			// ONIBUS
+			vehicleImage = spritesheet.getSprite(0, 64, 128, 64);
+			if (dados.MAO == 1) {
+				g.drawImage(vehicleImage, dados.POS_X, 80 + faixa * 59, -128, 64, null);
+			} else {
+				g.drawImage(vehicleImage, 1400 - dados.POS_X, 80 + faixa * 59, 128, 64, null);
+			}
+		}
+		if (dados.COR != 7) {
+			if (dados.MAO == 1) {
+				g.drawImage(vehicleImage, dados.POS_X, 80 + faixa * 59, -64, 64, null);
+			} else {
+				g.drawImage(vehicleImage, 1400 - dados.POS_X, 80 + faixa * 59, 64, 64, null);
+			}
+		}
+	}
+}

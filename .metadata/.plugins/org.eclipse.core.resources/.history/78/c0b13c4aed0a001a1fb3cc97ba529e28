@@ -1,0 +1,26 @@
+package main;
+
+import java.net.Socket;
+
+public class Sala implements Runnable {
+	public Socket[] players = new Socket[4];
+	public int SALA;
+
+	public Sala(int sala) {
+		for (int i = 0; i < 4; i++)
+			players[i] = new Socket();
+		this.SALA = sala;
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			if (players[3].getRemoteSocketAddress() != null && players[2].getRemoteSocketAddress() != null
+					&& players[1].getRemoteSocketAddress() != null && players[0].getRemoteSocketAddress() != null) {
+				System.out.println("ativado! Na sala " + SALA);
+			} else {
+				System.out.println("");
+			}
+		}
+	}
+}

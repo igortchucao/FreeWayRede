@@ -1,0 +1,85 @@
+package FreeWay.Game;
+
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+
+import FreeWay.Entities.Player;
+import FreeWay.Entities.Vehicles;
+
+public class Render extends Canvas implements Runnable {
+
+	private static final long serialVersionUID = 1L;
+	public Game game;
+	private boolean isRunning = true;
+
+	public Render(Game game) {
+		this.game = game;
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			System.out.println("entrou");
+			BufferStrategy bs = game.getBufferStrategy();
+			if (bs == null) {
+				game.createBufferStrategy(3);
+				return;
+			}
+			// RENDERIZAÇÃO DO FUNDO DO JOGO
+			Graphics g = game.image.getGraphics();
+			g.setColor(Color.gray);
+			g.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
+
+			g.dispose();
+			g = bs.getDrawGraphics();
+			g.drawImage(game.image, 0, 0, game.WIDTH * game.SCALE, game.HEIGHT * game.SCALE, null);
+			// SE ELE ESTIVER NO MENU, RENDERIZA O MENU
+			if (game.menu.menuSelect.equals("menu") || game.menu.menuSelect.equals("wait")) {
+				game.menu.render(g);
+			} else if (game.menu.menuSelect.equals("play")) {
+				if (!game.contagem) {
+					// RENDERIZA A RUA
+					game.world.render(g);
+
+					// RENDERIZA OS CARROS
+					/*for (int i = 0; i < game.vehicles.size(); i++) {
+						Vehicles e = game.vehicles.get(i);
+						e.render(g, i);
+					}
+
+					// RENDERIZA OS PLAYERS
+					for (int i = 0; i < game.players.size(); i++) {
+						Player p = game.players.get(i);
+						p.render(g, game.PLAYER);
+					}*/
+				} else {
+					game.cont++;
+					if (game.cont > 50) {
+						game.cont = 0;
+						game.contAux += 1;
+					}
+					if (game.contAux == 3)
+						game.contagem = false;
+					g.setColor(Color.white);
+					g.setFont(new Font("arial", Font.BOLD, 300));
+					g.drawString("" + game.contAux, 650 + 3, 500);
+				}
+			} else if (game.menu.menuSelect.equals("single")) {
+				// RENDERIZA A RUA
+				game.world.render(g);
+				// RENDERIZA OS CARROS
+				for (int i = 0; i < game.vehicles.size(); i++) {
+					Vehicles e = game.vehicles.get(i);
+					e.render(g, i);
+				}
+				game.single.render(g);
+			}
+			bs.show();
+			System.out.println("siu");
+		}
+	}
+
+}

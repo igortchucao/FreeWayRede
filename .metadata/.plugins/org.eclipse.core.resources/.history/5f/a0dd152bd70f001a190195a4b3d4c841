@@ -1,0 +1,10 @@
+package Fases;
+
+public class Fase {
+	public double velocidade = 1;
+	public double velocidadeInicial = 1;
+	
+	public int policies = 0;
+	public int motos = 0;
+	public int onibus = 0; 
+}

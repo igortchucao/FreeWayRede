@@ -1,0 +1,10 @@
+package FreeWay.Fases;
+
+public class Fase3 extends Fase{
+	public Fase3() {
+		velocidade = (float) 1.5;
+		motos = 5;
+		policies = 1;
+		onibus = 0;
+	}
+}

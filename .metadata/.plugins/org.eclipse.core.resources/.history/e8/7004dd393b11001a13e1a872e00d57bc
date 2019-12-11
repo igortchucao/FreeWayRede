@@ -1,0 +1,77 @@
+package FreeWay.Game;
+
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+
+import FreeWay.Entities.Player;
+import FreeWay.Entities.Vehicles;
+
+public class Render extends Canvas implements Runnable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void run() {
+		while (true) {
+			BufferStrategy bs = this.getBufferStrategy();
+			if (bs == null) {
+				this.createBufferStrategy(3);
+				return;
+			}
+			// RENDERIZAÇÃO DO FUNDO DO JOGO
+			Graphics g = Game.image.getGraphics();
+			g.setColor(Color.gray);
+			g.fillRect(0, 0, WIDTH, HEIGHT);
+
+			g.dispose();
+			g = bs.getDrawGraphics();
+			g.drawImage(Game.image, 0, 0, Game.WIDTH * Game.SCALE, Game.HEIGHT * Game.SCALE, null);
+			// SE ELE ESTIVER NO MENU, RENDERIZA O MENU
+			if (Game.menu.menuSelect.equals("menu") || Game.menu.menuSelect.equals("wait")) {
+				Game.menu.render(g);
+			} else if (Game.menu.menuSelect.equals("play")) {
+				if (!Game.contagem) {
+					// RENDERIZA A RUA
+					Game.world.render(g);
+
+					// RENDERIZA OS CARROS
+					for (int i = 0; i < Game.vehicles.size(); i++) {
+						Vehicles e = Game.vehicles.get(i);
+						e.render(g, i);
+					}
+
+					// RENDERIZA OS PLAYERS
+					for (int i = 0; i < Game.players.size(); i++) {
+						Player p = Game.players.get(i);
+						p.render(g, Game.PLAYER);
+					}
+				} else {
+					Game.cont++;
+					if (Game.cont > 50) {
+						Game.cont = 0;
+						Game.contAux += 1;
+					}
+					if (Game.contAux == 3)
+						Game.contagem = false;
+					g.setColor(Color.white);
+					g.setFont(new Font("arial", Font.BOLD, 300));
+					g.drawString("" + Game.contAux, 650 + 3, 500);
+				}
+			} else if (Game.menu.menuSelect.equals("single")) {
+				// RENDERIZA A RUA
+				Game.world.render(g);
+				// RENDERIZA OS CARROS
+				for (int i = 0; i < Game.vehicles.size(); i++) {
+					Vehicles e = Game.vehicles.get(i);
+					e.render(g, i);
+				}
+				Game.single.render(g);
+			}
+			bs.show();
+
+		}
+	}
+}

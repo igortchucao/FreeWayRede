@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;VehiclesData.java&apos; to &apos;Gerenciador_Salas2.0/src/FreeWay.Entities&apos;&#x0D;&#x0A;- Original project: &apos;Jogo_da_Galinha&apos;&#x0D;&#x0A;- Destination element: &apos;Gerenciador_Salas2.0/src/FreeWay.Entities&apos;&#x0D;&#x0A;- Original element: &apos;FreeWay.Entities.VehiclesData.java&apos;" description="Copy compilation unit" destination="=Gerenciador_Salas2.0/src&lt;FreeWay.Entities" element1="/src&lt;FreeWay.Entities{VehiclesData.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1574700345509" units="1" version="1.0"/>
+</session>

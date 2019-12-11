@@ -1,0 +1,11 @@
+package FreeWay.Game;
+
+public class Rende implements Runnable{
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

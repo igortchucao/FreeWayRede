@@ -1,0 +1,45 @@
+package FreeWay.Audio;
+
+import java.applet.Applet;
+import java.applet.AudioClip;
+
+public class Sound {
+	private AudioClip clip;
+	
+	public static Sound[] buzinas = new Sound[3];
+	
+
+	private Sound(String name) {
+		buzinas[0] = new Sound("/buzina1.mp3");
+		buzinas[1] = new Sound("/buzina2.mp3");
+		buzinas[2] = new Sound("/buzina3.mp3");
+		try {
+			clip = Applet.newAudioClip(Sound.class.getResource(name));
+		} catch (Throwable e) {
+		}
+	}
+	
+	public void play() {
+		try {
+			new Thread() {
+				public void run() {
+					clip.play();
+				}
+			}.start();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	public void loop() {
+		try {
+			new Thread() {
+				public void run() {
+					clip.loop();
+				}
+			}.start();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+}

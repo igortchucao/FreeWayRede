@@ -1,0 +1,40 @@
+package main;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Gerenciador implements Runnable {
+
+	public Sala[] salas = new Sala[10];
+	public int PORTA_PADRAO = 80;
+	public int QNT_PLAYERS = 0;
+
+	public Gerenciador() {
+		for (int i = 0; i < salas.length; i++) {
+			salas[i] = new Sala(i);
+			new Thread(salas[i]).start();
+		}
+	}
+
+	@Override
+	public void run() {
+		try {
+			ServerSocket socketServidor = new ServerSocket(PORTA_PADRAO);
+
+			System.out.println("Servidor iniciado ...");
+			System.out.println("------------------------------");
+			System.out.println("Ouvindo na porta: " + PORTA_PADRAO);
+			while (true) {
+				Socket conexao = socketServidor.accept();
+				System.out.println("SERVIDOR : " + conexao.getRemoteSocketAddress());
+				salas[QNT_PLAYERS / 4].players[QNT_PLAYERS % 4] = conexao;
+
+				QNT_PLAYERS += 1;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+}

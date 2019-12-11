@@ -1,0 +1,19 @@
+package FreeWay.Fases;
+
+import FreeWay.Game.Game;
+
+public class Fase {
+	public double velocidade = 1;
+	public double velocidadeInicial = 1;
+
+	public int policies = 0;
+	public int motos = 0;
+	public int onibus = 0;
+
+	public Fase() {
+		velocidade = (float) 1.0;
+		for (int i = 0; i < 10; i++) {
+			Game.vehicles.get(i).dados.typeVehicules = 5;
+		}
+	}
+}

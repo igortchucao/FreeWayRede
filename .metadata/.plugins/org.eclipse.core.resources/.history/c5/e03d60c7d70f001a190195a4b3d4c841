@@ -1,0 +1,16 @@
+package FreeWay.Fases;
+
+import FreeWay.Game.Game;
+import FreeWay.Game.SinglePlayer;
+
+public class Fase1 extends Fase{
+	public Fase1() {
+		velocidade = (float) 1.5;
+		motos = 5;
+		policies = 1;
+		onibus = 0;
+		for (int i = 0; i < 10; i++) {
+			Game.vehicles.get(i).dados.typeVehicules = 7;
+		}
+	}
+}

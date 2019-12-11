@@ -1,0 +1,5 @@
+package FreeWay.Fases;
+
+public class Fase2 extends Fase{
+
+}

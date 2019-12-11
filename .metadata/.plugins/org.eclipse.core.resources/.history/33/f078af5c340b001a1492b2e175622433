@@ -1,0 +1,76 @@
+package FreeWay.Main;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import FreeWay.Entities.PlayerData;
+import FreeWay.Entities.VehiclesData;
+import FreeWay.Game.geradorVehicles;
+
+public class Sala implements Runnable {
+
+	public static List<Socket> jogadoresConectados;
+	private static DataOutputStream falar;
+	private static DataInputStream ouvir;
+	private ObjectOutputStream outObject;
+	private ObjectInputStream inObject;
+	public List<VehiclesData> vehicles;
+	public List<PlayerData> players;
+	private static boolean isRunning = true;
+	public static boolean retorno = true;
+
+	public Sala(List<Socket> jogadores) {
+		this.jogadoresConectados = jogadores;
+		System.out.println("SALA CRIADA COM OS JOGADORES: ");
+		for (int i = 0; i < 4; i++) {
+			System.out.println(this.jogadoresConectados.get(i).getRemoteSocketAddress());
+		}
+		vehicles = new ArrayList<VehiclesData>();
+		players = new ArrayList<PlayerData>();
+
+		for (int i = 0; i < 10; i++)
+			vehicles.add(new VehiclesData());
+
+		new Thread(new geradorVehicles(vehicles)).start();
+	}
+
+	@Override
+	public void run() {
+		try {
+			for (int i = 0; i < 4; i++) {
+				falar = new DataOutputStream(this.jogadoresConectados.get(i).getOutputStream());
+				falar.writeInt(i);
+			}
+
+			while (isRunning) {
+				System.out.println("pos" + vehicles.get(1).POS_X);
+				for (int j = 0; j < 4; j++) {
+
+					outObject = new ObjectOutputStream(jogadoresConectados.get(j).getOutputStream());
+					outObject.writeObject(vehicles);
+
+					outObject = new ObjectOutputStream(jogadoresConectados.get(j).getOutputStream());
+					outObject.writeObject(players);
+
+					ouvir = new DataInputStream(jogadoresConectados.get(j).getInputStream());
+					retorno = ouvir.readBoolean();
+
+					/*
+					 * inObject = new ObjectInputStream(conexao.getInputStream());
+					 * sala.players.set(PLAYER, (PlayerData) inObject.readObject());
+					 */
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

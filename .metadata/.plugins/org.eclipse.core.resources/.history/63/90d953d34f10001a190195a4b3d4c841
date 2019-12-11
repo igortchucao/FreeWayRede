@@ -1,0 +1,100 @@
+package FreeWay.World;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+import FreeWay.Game.Game;
+import FreeWay.Graficos.Spritesheet;
+
+public class World {
+
+	public final int TAM_PASSEIO = 50;
+	public final int TAM_RUA = 58;
+	public final int TAM_UI = 30;
+	public final int TAM_FOOT = 45;
+	public final int HEIGHT = 760;
+	public int MAP = 0;
+	public Color l_gray = new Color(211, 211, 211);
+	private Spritesheet spritesheet = new Spritesheet("/Logo.png");
+	private Spritesheet spritesheetUni = new Spritesheet("/images.jpg");
+
+	public BufferedImage LOGO_ACT = spritesheet.spritesheet;
+	public BufferedImage LOGO_UNI = spritesheetUni.spritesheet;
+
+	public void render(Graphics g) {
+		g.setColor(Color.black);
+		g.drawLine(0, TAM_UI + TAM_PASSEIO, 1400, TAM_UI + TAM_PASSEIO);
+
+		g.setColor(Color.black);
+		g.fillRoundRect(0, 0, TAM_PASSEIO, TAM_PASSEIO, 2, 3);
+
+		// HEAD UI
+		g.setColor(Color.gray);
+		g.fillRect(0, 0, 1400, TAM_UI);
+
+		// PASSEIO ALTO
+		g.setColor(Color.black);
+		g.fillRect(0, TAM_UI, 1400, TAM_PASSEIO);
+		g.setColor(l_gray);
+		g.fillRect(0, TAM_UI + 4, 1400, TAM_PASSEIO - 7);
+
+		// PASSEIO DE BAIXO
+		g.setColor(Color.black);
+		g.fillRect(0, HEIGHT - TAM_FOOT - TAM_PASSEIO, 1400, HEIGHT - TAM_FOOT);
+		g.setColor(l_gray);
+		g.fillRect(0, HEIGHT - TAM_FOOT - TAM_PASSEIO + 4, 1400, HEIGHT - TAM_FOOT - 674);
+
+		// FOOT
+		g.setColor(Color.black);
+		g.fillRect(0, HEIGHT - TAM_FOOT, 1400, HEIGHT);
+
+		if (MAP == 1) {
+			for (int i = 1; i < 10; i++) {
+				for (int j = 0; j < 28; j++) {
+					if (i == 5) {
+						g.setColor(Color.yellow);
+						g.drawLine(0 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA) - 2, 20 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA) - 2);
+						g.setColor(Color.yellow);
+						g.drawLine(0 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA) + 2, 20 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA) + 2);
+
+					} else {
+						g.setColor(Color.white);
+						g.drawLine(0 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA), 5 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA));
+					}
+				}
+			}
+
+			g.drawImage(LOGO_ACT, 10, 720, 300, 35, null);
+		} else {
+			g.drawImage(LOGO_UNI, 0, TAM_UI + TAM_PASSEIO, Game.WIDTH * 4,
+					(Game.HEIGHT * 4) - (TAM_UI + TAM_PASSEIO + TAM_FOOT + TAM_PASSEIO), null);
+
+			for (int i = 1; i < 10; i++) {
+				for (int j = 0; j < 28; j++) {
+					if (i == 5) {
+						g.setColor(Color.yellow);
+						g.drawLine(0 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA) - 2, 20 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA) - 2);
+						g.setColor(Color.yellow);
+						g.drawLine(0 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA) + 2, 20 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA) + 2);
+
+					} else {
+						g.setColor(Color.white);
+						g.drawLine(0 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA), 5 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA));
+						
+						//g.setColor(Color.white);
+						g.drawLine(2 + (j * 50), TAM_UI + TAM_PASSEIO + (i * TAM_RUA) - 6, 2 + (j * 50),
+								TAM_UI + TAM_PASSEIO + (i * TAM_RUA) + 10);
+					}
+				}
+			}
+		}
+	}
+}
