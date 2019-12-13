@@ -90,6 +90,7 @@ public class Player implements Serializable {
 	}
 
 	public void tick() {
+		//SE CONSEGUE ATRAVESSAR, VOLTA A POSIÇÃO INICIAL E SOMA PONTO
 		if (dados.POS_Y < 50) {
 			dados.POS_Y = 659;
 			dados.SCORE += 1;
@@ -99,12 +100,14 @@ public class Player implements Serializable {
 			dados.POS_Y -= speed;
 		if (DOWN && dados.POS_Y < 659)
 			dados.POS_Y += speed;
-
+		//SE É COLIDIDO, PERDE VIDA E VOLTA AO INICIO 
 		if (isColliding()) {
 			dados.POS_Y = 659;
 			LIFE -= 1;
 		}
 
+		//FUNÇÃO DOS SONS. É IGUAL A DE COLISÃO, MAS A MASCARA (AREA DE COLISAO) DELA É MAIS A FRENTE. ASSIM,
+			//QUANDO O PLAYER ESTIVER PERTO DE SER ATROPELADO, ELE BUZINA 
 		if (isNear()) {
 			int aux = rand.nextInt(3);
 			switch (aux) {
@@ -134,7 +137,7 @@ public class Player implements Serializable {
 			}
 		}
 	}
-
+//FUNÇÃO DE COLISÃO DA GALINHA COM O VEICULO
 	public boolean isColliding() {
 		for (int i = 0; i < Game.vehicles.size(); i++) {
 			if (Game.vehicles.get(i).dados.MAO == 1) {

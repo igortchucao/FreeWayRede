@@ -109,19 +109,25 @@ public class Sala implements Runnable {
 		}
 	}
 
+	//FUNÇÃO QUE COORDENA A THREAD DO JOGADOR 0
 	private Runnable outPutThread0 = new Runnable() {
 		public void run() {
+			//PASSA OS DADOS INICIAIS 
 			startGame(falar0, ouvir, 0);
 			while (isRunning) {
+				//TRANFERE OS CARROS DO SERVIDOR PARA O PLAYER 
 				vehiclesOut(outObject0, 0);
+				//TRANFERE A POSIÇÃO DOS OUTROS JOGADORES 
 				playerOut(outObject0, 0);
 			}
 		}
 	};
 	
+	//FUNÇÃO QUE RECEBE OS DADOS DO JOGADOR 0
 	private Runnable inPutThread0 = new Runnable() {
 		public void run() {
 			while (isRunning) 
+				//RECEBE A POSIÇÃO DO JOGADOR 
 				playerIn(inObject0, 0);
 		}
 	};
@@ -199,7 +205,7 @@ public class Sala implements Runnable {
 	
 	public void playerIn(ObjectInputStream inObject, int playerCliente) {
 		try {
-			// ENVIA OS DADOS DOS VEHICLES
+			// RECEBE OS DADOS DO JOGADOR E ATUALIZA NO VETOR DE JOGADORES DO SEVIDOR 
 			inObject = new ObjectInputStream(jogadoresConectados.get(playerCliente).getInputStream());
 			players.set(playerCliente, (PlayerData) inObject.readObject());
 		} catch (IOException | ClassNotFoundException e) {
@@ -213,6 +219,7 @@ public class Sala implements Runnable {
 			outPut = new DataOutputStream(jogadoresConectados.get(playerCliente).getOutputStream());
 			outPut.writeInt(playerCliente);
 
+			//SE ELE FOR O JOGADOR 0, ELE DEFINE QUAL MAPA USAR 
 			if (playerCliente == 0) {
 				// LÊ QUAL MAPA
 				inPut = new DataInputStream(jogadoresConectados.get(playerCliente).getInputStream());
@@ -226,7 +233,11 @@ public class Sala implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+//FUNÇÃO QUE ATUALIZA OS DADOS DOS VEICULOS NO SERVIDOR. ESTA FUNÇÃO DESACELERA A THREAD PRINCIPAL DO SERVIDOR 
+	//PARA ATUALIZAR A POSIÇÃO DOS CARROS NA MESMA VELOCIDADE EM QUE O JOGO DO CLIENTE RODA. 
+	//ENTAO UMA MANEIRA DE AJUSTAR AS VELOCIDADES DOS CARROS PARA O USUARIO É MUDAR A VELOCIDADE DESTA THREAD
+	//E MUDAR A VELOCIDADE DOS CARROS. ESTA É UMA MANEIRA QUE CONSEGUI DE TIRAR OS LAGS DO JOGO. ACELEREI A
+	// THREAD DO SERVIDOR E ENTAO OS LAGS SE TORNAVAM QUASE IMPERCEPTIVEIS.
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
@@ -244,13 +255,17 @@ public class Sala implements Runnable {
 			delta += (now - lastTime) / ns;
 			lastTime = now;
 			if (delta >= 1) {
-
+				//ATUALIZA OS FRAMES 
 				frames++;
 				if (frames > maxFrames) {
 					frames = 0;
 					for (int i = 0; i < 10; i++) {
+						//"VehiclesData" É UMA CLASSE QUE ARMAZENA A POSIÇÃO DOS CARROS, COR, MAO E VELOCIDADE 
 						VehiclesData v = vehicles.get(i);
+						//DENTRO DESTA FUNÇÃO, SE O CARRO PASSA DA POSIÇAO "1400" (TAMANHO DA TELA),
+							//ELE RANDOMIZA UMA NOVA COR, MAO E VELOCIDADE. (OS CARROS DIFERENTES SÃO CORES)
 						v.randomize();
+						//ATUALIZA A VELOCIDADE DO CARRO. ESSE ARGUMENT
 						v.tick(1);
 					}
 				}

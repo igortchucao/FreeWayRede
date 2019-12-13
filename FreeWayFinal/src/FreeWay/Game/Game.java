@@ -165,7 +165,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 					falar.writeInt(1);
 
 				} else {
-					// ENVIA QUAL MAPA
+					// OUVE QUAL MAPA É 
 					ouvir = new DataInputStream(cliente.getInputStream());
 					MAP = ouvir.readInt();
 				}
@@ -173,7 +173,11 @@ public class Game extends Canvas implements KeyListener, Runnable {
 				e.printStackTrace();
 			}
 			isConnected = true;
+			//A PARTIR DESTA CONECÇÃO, ATIVA UMA THREAD QUE FICA O TEMPO TODO ATUALIZANDO A POSIÇÃO DOS CARROS
+				//DE ACORDO COM O SERVIDOR. ESTA MESMA THREAD ATUALIZA A POSIÇÃO DOS OUTROS PLAYERS.
 			threadIn.start();
+			
+			//TAMBEM ATIVA A THREAD QUE ATUALIZA A POSIÇÃO DO PLAYER NO SERVIDOR 
 			threadOut.start();
 			menu.menuSelect = "play";
 		}
@@ -197,7 +201,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	};
 
 	public synchronized void inputServerVehicles() {
-		// RECEBE AS POSIÇÕES DOS PLAYERS
+		// RECEBE AS POSIÇÕES DOS VEICULOS
 		try {
 			inObject = new ObjectInputStream(cliente.getInputStream());
 			vehiclesDatas = (List<VehiclesData>) inObject.readObject();
@@ -211,7 +215,6 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	}
 
 	public synchronized void inputServerPlayers() {
-		// System.out.println("CLINTE: " + vehicles.get(1).dados.getPOS_X());
 		// RECEBE AS POSIÇÕES DOS PLAYERS
 		try {
 			inObject = new ObjectInputStream(cliente.getInputStream());
@@ -227,7 +230,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	}
 
 	public synchronized void outputServerPlayers() {
-		// RECEBE AS POSIÇÕES DOS PLAYERS
+		// ENVIA A POSIÇÃO DO PLAYER
 		try {
 			outObject = new ObjectOutputStream(cliente.getOutputStream());
 			// System.out.println("CLIENTE : " );
@@ -245,11 +248,13 @@ public class Game extends Canvas implements KeyListener, Runnable {
 			frames = 0;
 		}
 
-		// SE ELE ESTIVER NO SINGLE
+		// SE ELE ESTIVER NO SINGLE, ELE É REDIRECIONADO PARA A CLASSE SINGLES QUE FAZ A ATUALIZACAO 
+			//DOS VEICULOS SIMULANDO O SERVIDOR. DENTRO DESTA CLASSE ELE CHAMA A FUNÇÃO "tick" DO PLAYER
 		if (menu.menuSelect.equals("single")) {
 			single.tick();
 
 		} else {
+			//"tick" SÃO AS FUNÇÕES DE LOGICA DO JOGO. AQUI ATUALIZA OS DADOS DO JOGADOR.
 			if (players.size() > 0) {
 				players.get(PLAYER).tick();
 			}
@@ -274,9 +279,10 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		if (menu.menuSelect.equals("menu") || menu.menuSelect.equals("wait")) {
 			menu.render(g);
 		} else if (menu.menuSelect.equals("play")) {
-			// contagem = true;
 			if (!contagem) {
-				// RENDERIZA A RUA
+				// RENDERIZA A RUA. AQUI É CRIADO TODA O MAPA: FAIXAS, FAIXA AMARELA, PASSEIO E PONTUAÇÕES. 
+				// QUANDO TROCA O MAPA, APENAS É TROCADO O SPRITE DO JOGO. (SPRITE É O ARQUIVO DE IMAGENS QUE
+				//FICA TODAS AS IMAGENS DE CADA VEICULO E GALINHAS)
 				world.render(g);
 
 				// RENDERIZA OS CARROS
@@ -314,7 +320,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		}
 		bs.show();
 	}
-
+//FUNÇÃO QUE DESACELERA A THREAD ASSIM COMO NO SERVIDOR 
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
